@@ -25,7 +25,7 @@ main {
     margin: 0 auto;
 }
 
-/* === 1. 新增模板產生器樣式 === */
+/* 1. 新增模板產生器樣式 */
 .creator-section {
     background: #fff;
     border-radius: 10px;
@@ -133,12 +133,24 @@ main {
     box-sizing: border-box; /* 確保 padding 不會撐爆寬度 */
 }
 
+/* === ★★★ 修改：模板結果網格佈局 ★★★ === */
+#resultsContainer {
+    display: grid;
+    /* auto-fit: 自動填滿，盡可能多塞欄位
+      minmax(300px, 1fr): 每個欄位最小 300px，最大 1fr (均分)
+      這會自動實現響應式效果，在小螢幕上自動變回單欄
+    */
+    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+    gap: 25px; /* 卡片之間的間距 (取代 margin-bottom) */
+}
+
+
 /* === 2. 模板卡片樣式 (含折疊效果) === */
 .template-card {
     background-color: #ffffff;
     border-radius: 10px;
     box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
-    margin-bottom: 25px;
+    /* margin-bottom: 25px;  <-- ★★★ 修改：移除此行 ★★★ */
     padding: 25px;
     /* 過渡效果 */
     transition: box-shadow 0.3s ease, transform 0.3s ease;
@@ -169,17 +181,17 @@ main {
     border: 1px solid #eee;
     border-radius: 5px;
     
-    /* --- 修改：預設折疊 --- */
+    /* --- 預設折疊 --- */
     max-height: 0;
     overflow: hidden;
     opacity: 0;
     margin-bottom: 0; /* 隱藏時移除 margin */
     
-    /* --- 修改：過渡效果 --- */
+    /* --- 過渡效果 --- */
     transition: max-height 0.4s ease-out, opacity 0.3s ease-in, margin-bottom 0.4s ease-out;
 }
 
-/* --- 新增：滑鼠移上時展開 --- */
+/* --- 滑鼠移上時展開 --- */
 .template-card:hover .content-wrapper {
     max-height: 300px; /* 展開高度 (可自行調整) */
     overflow-y: auto;
@@ -207,15 +219,15 @@ main {
     font-size: 14px;
     cursor: pointer;
     
-    /* --- 修改：預設隱藏 --- */
+    /* --- 預設隱藏 --- */
     opacity: 0;
     transform: translateY(10px);
     
-    /* --- 修改：過渡效果 (帶有 0.1s 延遲) --- */
+    /* --- 過渡效果 (帶有 0.1s 延遲) --- */
     transition: opacity 0.3s ease-in 0.1s, transform 0.3s ease-in 0.1s;
 }
 
-/* --- 新增：滑鼠移上時顯示 --- */
+/* --- 滑鼠移上時顯示 --- */
 .template-card:hover .copy-btn {
     opacity: 1;
     transform: translateY(0);
