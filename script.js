@@ -1,9 +1,62 @@
 document.addEventListener('DOMContentLoaded', () => {
+    // === 原有元素 ===
     const searchBox = document.getElementById('searchBox');
     const resultsContainer = document.getElementById('resultsContainer');
     let templates = []; // 用來儲存所有模板
 
-    // 1. 讀取 JSON 檔案
+    // === 1. 新增模板產生器元素 ===
+    const generateBtn = document.getElementById('generateBtn');
+    const newTitle = document.getElementById('newTitle');
+    const newKeywords = document.getElementById('newKeywords');
+    const newContent = document.getElementById('newContent');
+    const outputContainer = document.getElementById('outputContainer');
+    const jsonOutput = document.getElementById('jsonOutput');
+    const copyJsonBtn = document.getElementById('copyJsonBtn');
+
+    // === 2. 幫「產生 JSON」按鈕加上事件 ===
+    generateBtn.addEventListener('click', () => {
+        const title = newTitle.value.trim();
+        const keywordsStr = newKeywords.value.trim();
+        const content = newContent.value.trim();
+
+        if (!title || !keywordsStr || !content) {
+            alert('標題、關鍵字和內容皆不可為空！');
+            return;
+        }
+
+        // 將逗號分隔的關鍵字字串，轉換為 JSON 陣列
+        const keywords = keywordsStr.split(',').map(k => k.trim());
+        
+        const newTemplateObject = {
+            title: title,
+            keywords: keywords,
+            content: content
+        };
+        
+        // 格式化 JSON (null, 2 是為了排版好看)
+        const jsonString = JSON.stringify(newTemplateObject, null, 2);
+        
+        jsonOutput.innerText = jsonString;
+        outputContainer.classList.remove('hidden'); // 顯示結果區塊
+    });
+
+    // === 3. 幫「複製 JSON」按鈕加上事件 ===
+    copyJsonBtn.addEventListener('click', () => {
+        navigator.clipboard.writeText(jsonOutput.innerText).then(() => {
+            copyJsonBtn.innerText = '已複製!';
+            copyJsonBtn.classList.add('copied');
+            setTimeout(() => {
+                copyJsonBtn.innerText = '複製 JSON';
+                copyJsonBtn.classList.remove('copied');
+            }, 1500);
+        }).catch(err => {
+            console.error('複製 JSON 失敗:', err);
+            alert('複製失敗，請手動選取。');
+        });
+    });
+
+
+    // === 4. 讀取模板 JSON 檔案 (原有功能) ===
     fetch('templates.json')
         .then(response => response.json())
         .then(data => {
@@ -15,7 +68,7 @@ document.addEventListener('DOMContentLoaded', () => {
             resultsContainer.innerHTML = '<p class="error">無法載入模板資料庫。</p>';
         });
 
-    // 2. 監聽搜尋框的輸入
+    // === 5. 監聽搜尋框的輸入 (原有功能) ===
     searchBox.addEventListener('input', (e) => {
         const searchTerm = e.target.value.toLowerCase().trim();
         
@@ -24,18 +77,18 @@ document.addEventListener('DOMContentLoaded', () => {
             return;
         }
 
-        // 3. 篩選模板
+        // 篩選模板
         const filteredTemplates = templates.filter(template => {
             const titleMatch = template.title.toLowerCase().includes(searchTerm);
             const keywordMatch = template.keywords.some(keyword => keyword.toLowerCase().includes(searchTerm));
             return titleMatch || keywordMatch;
         });
 
-        // 4. 顯示篩選結果
+        // 顯示篩選結果
         displayTemplates(filteredTemplates);
     });
 
-    // 5. 負責將模板顯示在畫面上
+    // === 6. 負責將模板顯示在畫面上 (原有功能) ===
     function displayTemplates(templatesToDisplay) {
         if (templatesToDisplay.length === 0) {
             resultsContainer.innerHTML = '<p>找不到符合條件的模板。</p>';
@@ -47,9 +100,6 @@ document.addEventListener('DOMContentLoaded', () => {
             const templateElement = document.createElement('div');
             templateElement.className = 'template-card';
             
-            // 處理模板內容中的換行符號 (\n) 轉換為 <br>
-            const formattedContent = template.content.replace(/\n/g, '<br>');
-
             templateElement.innerHTML = `
                 <h2>${template.title}</h2>
                 <div class="keywords">
@@ -64,11 +114,11 @@ document.addEventListener('DOMContentLoaded', () => {
             resultsContainer.appendChild(templateElement);
         });
 
-        // 6. 為所有複製按鈕加上事件
+        // 為所有「複製內容」按鈕加上事件
         addCopyListeners();
     }
 
-    // 7. 複製功能的邏輯
+    // === 7. 複製「模板內容」功能的邏輯 (原有功能) ===
     function addCopyListeners() {
         document.querySelectorAll('.copy-btn').forEach(button => {
             button.addEventListener('click', (e) => {

@@ -10,10 +10,31 @@
 
     <header>
         <h1>我的報告模板庫 📚</h1>
-        <p>輸入關鍵字來搜尋您需要的模板。</p>
+        <p>輸入關鍵字搜尋，或滑鼠移至卡片上展開內容。</p>
     </header>
 
     <main>
+        <details class="creator-section">
+            <summary>✨ 新增模板產生器</summary>
+            <div class="creator-form">
+                <label for="newTitle">模板標題:</label>
+                <input type="text" id="newTitle" placeholder="例如：週報模板">
+                
+                <label for="newKeywords">關鍵字 (請用英文逗號 , 分隔):</label>
+                <input type="text" id="newKeywords" placeholder="例如：週報, weekly, report">
+                
+                <label for="newContent">模板內容 (支援換行):</label>
+                <textarea id="newContent" rows="10" placeholder="## 本週進度..."></textarea>
+                
+                <button id="generateBtn">產生 JSON 程式碼</button>
+                
+                <div id="outputContainer" class="hidden">
+                    <p>請複製以下程式碼，並手動貼到您 GitHub 上的 `templates.json` 檔案中 (記得在最後一個模板後加上逗號 ,)：</p>
+                    <pre id="jsonOutput"></pre>
+                    <button id="copyJsonBtn">複製 JSON</button>
+                </div>
+            </div>
+        </details>
         <div class="search-container">
             <input type="search" id="searchBox" placeholder="輸入關鍵字 (例如: 週報、會議、專案)...">
         </div>
