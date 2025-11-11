@@ -3,12 +3,13 @@ document.addEventListener('DOMContentLoaded', () => {
     // === 1. 初始化 Firebase ===
     // ▼▼▼ 這裡應該是您真實的 firebaseConfig ▼▼▼
     const firebaseConfig = {
-      apiKey: "AIza...YOUR...KEY",
-      authDomain: "YOUR-PROJECT-ID.firebaseapp.com",
-      projectId: "YOUR-PROJECT-ID",
-      storageBucket: "YOUR-PROJECT-ID.appspot.com",
-      messagingSenderId: "123456789",
-      appId: "1:12345...web...67890"
+        apiKey: "AIzaSyBHhPPECnCeLOKj7662PwfUAD2jKJCnb5k",
+        authDomain: "report-database-562c6.firebaseapp.com",
+        projectId: "report-database-562c6",
+        storageBucket: "report-database-562c6.firebasestorage.app",
+        messagingSenderId: "403596473433",
+        appId: "1:403596473433:web:19e17c3c2007c1a894ad48",
+        measurementId: "G-170VP2M2XM"
     };
     // ▲▲▲ 這裡應該是您真實的 firebaseConfig ▲▲▲
 
