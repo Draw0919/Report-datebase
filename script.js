@@ -1,32 +1,25 @@
 document.addEventListener('DOMContentLoaded', () => {
 
     // === 1. 初始化 Firebase ===
-    // ▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼
-    // !! 警告：請貼上您在階段一取得的 firebaseConfig !!
-    // !! 這裡是唯一需要您手動修改的地方 !!
-    // ▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼
+    // ▼▼▼ 這裡應該是您真實的 firebaseConfig ▼▼▼
     const firebaseConfig = {
-        apiKey: "AIzaSyBHhPPECnCeLOKj7662PwfUAD2jKJCnb5k",
-        authDomain: "report-database-562c6.firebaseapp.com",
-        projectId: "report-database-562c6",
-        storageBucket: "report-database-562c6.firebasestorage.app",
-        messagingSenderId: "403596473433",
-        appId: "1:403596473433:web:19e17c3c2007c1a894ad48",
-        measurementId: "G-170VP2M2XM" 
+      apiKey: "AIza...YOUR...KEY",
+      authDomain: "YOUR-PROJECT-ID.firebaseapp.com",
+      projectId: "YOUR-PROJECT-ID",
+      storageBucket: "YOUR-PROJECT-ID.appspot.com",
+      messagingSenderId: "123456789",
+      appId: "1:12345...web...67890"
     };
-    // ▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲
-    // ▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲
+    // ▲▲▲ 這裡應該是您真實的 firebaseConfig ▲▲▲
 
-    // 初始化 Firebase
-    // 我們使用的是 v9 compat (相容模式)，比較容易上手
     firebase.initializeApp(firebaseConfig);
-    const db = firebase.firestore(); // 取得 Firestore 資料庫實例
-    const templatesCol = db.collection('templates'); // 取得 'templates' 集合的引用
+    const db = firebase.firestore();
+    const templatesCol = db.collection('templates');
 
     // === 2. 獲取頁面元素 ===
     const searchBox = document.getElementById('searchBox');
     const resultsContainer = document.getElementById('resultsContainer');
-    let templates = []; // 儲存從 Firebase 載入的模板
+    let templates = [];
 
     // === 3. 新增模板 (寫入 Firestore) ===
     const saveTemplateBtn = document.getElementById('saveTemplateBtn');
@@ -44,8 +37,7 @@ document.addEventListener('DOMContentLoaded', () => {
             alert('標題、關鍵字和內容皆不可為空！');
             return;
         }
-
-        // 將逗號分隔的關鍵字字串，轉換為陣列
+        
         const keywords = keywordsStr.split(',').map(k => k.trim());
         
         const newTemplateObject = {
@@ -58,19 +50,16 @@ document.addEventListener('DOMContentLoaded', () => {
             saveTemplateBtn.disabled = true;
             saveStatus.innerText = '儲存中...';
 
-            // ★★★ 核心：將物件寫入 Firestore ★★★
             const docRef = await templatesCol.add(newTemplateObject);
             
             saveStatus.innerText = `儲存成功! (ID: ${docRef.id})`;
             
-            // 清空表單
             newTitle.value = '';
             newKeywords.value = '';
             newContent.value = '';
             
-            // 即時更新畫面 (將新模板加入陣列並重新顯示)
             templates.push(newTemplateObject);
-            displayTemplates(templates);
+            displayTemplates(templates); // 重新顯示
 
             setTimeout(() => { saveStatus.innerText = ''; }, 3000);
 
@@ -87,7 +76,6 @@ document.addEventListener('DOMContentLoaded', () => {
     // === 4. 讀取模板 (從 Firestore 讀取) ===
     async function loadTemplatesFromFirestore() {
         try {
-            // ★★★ 核心：從 Firestore 讀取集合 ★★★
             const querySnapshot = await templatesCol.get();
 
             if (querySnapshot.empty) {
@@ -95,14 +83,18 @@ document.addEventListener('DOMContentLoaded', () => {
                 return;
             }
 
-            templates = []; // 清空本地陣列
+            templates = [];
             querySnapshot.forEach((doc) => {
-                // doc.data() 是不包含 ID 的文件內容
                 templates.push(doc.data());
             });
 
-            // 初始顯示所有模板
-            displayTemplates(templates);
+            displayTemplates(templates); // 顯示模板
+            
+            // ★★★ 新增：手動觸發 AOS 刷新 ★★★
+            // 確保 AOS 能 "看到" 剛剛動態載入的卡片
+            if (window.AOS) {
+                AOS.refresh();
+            }
 
         } catch (error) {
             console.error("讀取模板資料時發生錯誤:", error);
@@ -110,7 +102,7 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     }
 
-    // === 5. 監聽搜尋框的輸入 (此功能不變) ===
+    // === 5. 監聽搜尋框的輸入 ===
     searchBox.addEventListener('input', (e) => {
         const searchTerm = e.target.value.toLowerCase().trim();
         
@@ -119,19 +111,22 @@ document.addEventListener('DOMContentLoaded', () => {
             return;
         }
 
-        // 篩選模板 (從已載入的 templates 陣列中)
         const filteredTemplates = templates.filter(template => {
             const titleMatch = template.title.toLowerCase().includes(searchTerm);
-            // 確保 keywords 是陣列
             const keywordMatch = Array.isArray(template.keywords) && template.keywords.some(keyword => keyword.toLowerCase().includes(searchTerm));
             return titleMatch || keywordMatch;
         });
 
-        // 顯示篩選結果
-        displayTemplates(filteredTemplates);
+        displayTemplates(filteredTemplates); // 顯示篩選結果
+        
+        // ★★★ 新增：手動觸發 AOS 刷新 ★★★
+        // 確保 AOS 能 "看到" 搜尋過濾後的卡片
+        if (window.AOS) {
+            AOS.refresh();
+        }
     });
 
-    // === 6. 負責將模板顯示在畫面上 (此功能不變) ===
+    // === 6. 負責將模板顯示在畫面上 ===
     function displayTemplates(templatesToDisplay) {
         if (templatesToDisplay.length === 0) {
             resultsContainer.innerHTML = '<p>找不到符合條件的模板。</p>';
@@ -139,11 +134,14 @@ document.addEventListener('DOMContentLoaded', () => {
         }
 
         resultsContainer.innerHTML = ''; // 清空舊結果
+        
         templatesToDisplay.forEach(template => {
             const templateElement = document.createElement('div');
             templateElement.className = 'template-card';
             
-            // 確保 keywords 是陣列再 join
+            // ★★★ 新增：為卡片加上 AOS 動畫屬性 ★★★
+            templateElement.setAttribute('data-aos', 'fade-up'); 
+            
             const keywordsText = Array.isArray(template.keywords) ? template.keywords.join(', ') : '無';
 
             templateElement.innerHTML = `

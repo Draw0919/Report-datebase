@@ -20,6 +20,7 @@ body {
     line-height: 1.6;
     margin: 0;
     padding: 20px;
+    overflow-x: hidden; /* 確保 AOS 動畫不會產生水平捲軸 */
 }
 
 header {
@@ -46,7 +47,6 @@ main {
 }
 
 /* === 2. 新增模板產生器 (Refined) === */
-/* 這是您的「控制面板」，我們讓他看起來更獨立 */
 .creator-section {
     background: var(--color-surface);
     border-radius: var(--border-radius);
@@ -269,5 +269,38 @@ main {
 #resultsContainer > p {
     text-align: center;
     color: var(--color-text-light);
+    font-size: 1.1em;
+}
+
+/* === 6. 新增：CSS Loader 動畫 === */
+@keyframes spin {
+    from { transform: rotate(0deg); }
+    to { transform: rotate(360deg); }
+}
+
+.loader {
+    width: 60px;
+    height: 60px;
+    border: 8px solid #f3f3f3; /* 淺灰色底 */
+    border-top: 8px solid var(--color-primary); /* 主題藍色 */
+    border-radius: 50%;
+    animation: spin 1s linear infinite; /* 關鍵 */
+}
+
+.loading-container {
+    /* 讓 loader 和文字垂直居中排列 */
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 40px;
+    color: var(--color-text-light);
+    
+    /* 讓這個容器橫跨整個 grid */
+    grid-column: 1 / -1;
+}
+
+.loading-container p {
+    margin-top: 15px;
     font-size: 1.1em;
 }

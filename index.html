@@ -5,6 +5,8 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>我的報告模板庫 (Firebase)</title>
     
+    <link href="https://unpkg.com/aos@2.3.1/dist/aos.css" rel="stylesheet">
+    
     <script src="https://www.gstatic.com/firebasejs/9.6.10/firebase-app-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/9.6.10/firebase-firestore-compat.js"></script>
     
@@ -18,7 +20,8 @@
     </header>
 
     <main>
-        <details class="creator-section" open> <summary>✨ 新增模板</summary>
+        <details class="creator-section" open>
+            <summary>✨ 新增模板</summary>
             <div class="creator-form">
                 <label for="newTitle">模板標題:</label>
                 <input type="text" id="newTitle" placeholder="例如：週報模板">
@@ -33,15 +36,28 @@
                 <span id="saveStatus" class="status-text"></span>
             </div>
         </details>
+
         <div class="search-container">
             <input type="search" id="searchBox" placeholder="輸入關鍵字 (例如: 週報、會議、專案)...">
         </div>
         
         <div id="resultsContainer">
-            <p class="status-text">正在從 Firebase 載入模板...</p>
-        </div>
+            <div class="loading-container">
+                <div class="loader"></div>
+                <p>正在從 Firebase 載入模板...</p>
+            </div>
+            </div>
     </main>
 
     <script src="script.js"></script>
+    
+    <script src="https://unpkg.com/aos@2.3.1/dist/aos.js"></script>
+    <script>
+        AOS.init({
+            once: true, // 動畫只播放一次
+            duration: 600 // 動畫持續 0.6 秒
+        }); 
+    </script>
+
 </body>
 </html>
